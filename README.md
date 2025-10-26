@@ -46,9 +46,10 @@ nstsdc-portal/
 - **Passport** 0.7.0 - Authentication middleware
 - **Passport-GitHub** 1.1.0 - GitHub OAuth strategy
 - **JWT** (jsonwebtoken 9.0.2) - Token-based authentication
-- **Mongoose** 8.19.2 - MongoDB ODM
+- **Prisma**  - Prisma ODM
 - **CORS** 2.8.5 - Cross-origin resource sharing
 - **dotenv** 17.2.3 - Environment variable management
+- **Database** - Postgres
 
 ### Development Tools
 - **Nodemon** 3.1.10 - Auto-restart on file changes
@@ -89,9 +90,6 @@ nstsdc-portal/
    ```env
    # Server Configuration
    PORT=3000
-
-   # MongoDB
-   MONGODB_URI=your_mongodb_connection_string
 
    # GitHub OAuth
    GITHUB_CLIENT_ID=your_github_client_id
