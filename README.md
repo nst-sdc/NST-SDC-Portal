@@ -15,6 +15,32 @@ Here's a **README** you can use for your NST-SDC-Portal GitHub repository:
 - **Achievements:** Showcase milestone badges for individual and team accomplishments.
 - **Repository Analytics:** Analyze project-level stats, growth trends, and participation quality.
 
+## Basic Flow Diagram
+
+```
+User                   Server/API                    Admin
+ |                        |                           |
+ |---Login via GitHub---->| OAuth callback            |
+ |<---JWT/Session Auth----|                           |
+ |----Profile Form------->| Save user profile         |
+ |<--Dashboard Data-------| Fetch GH & DB             |
+ |                        |                           |
+                                  |-----Admin login-->|
+                                  |<--User/list data--|
+                                  |---User details--->|
+ 
+
+
+```
+
+## Technologies Used
+
+- **Frontend:** React, JavaScript
+- **Backend:** Node.js, Express,Prisma
+- **Database:**PostgreSQL
+- **Authentication:** GitHub OAuth, JWT
+- **APIs:** GitHub REST API
+
 ## Getting Started
 
 1. **Clone the Repository**
