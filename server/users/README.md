@@ -3,7 +3,10 @@
 This document lists the available API endpoints in the `users` app.
 
 ## Base URL
-
+### Server Start Command
+```bash
+.venv/bin/python manage.py runserver
+```
 All paths below are relative to the server base URL (e.g., `http://127.0.0.1:8000`).
 
 ## Endpoints
