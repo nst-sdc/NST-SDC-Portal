@@ -2,55 +2,79 @@ import { Github } from 'lucide-react';
 
 const ProjectCard = ({ project }) => {
     const badgeColors = {
-        contributor: 'bg-[--color-badge-contributor] text-gray-800',
-        maintainer: 'bg-[--color-badge-maintainer] text-gray-800'
+        contributor: 'bg-[#7FFF7F] text-gray-800',
+        maintainer: 'bg-[#FFD700] text-gray-800'
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-            {/* Header with Project Name and Badge */}
-            <div className="flex justify-between items-start mb-4">
-                <h3 className="text-xl font-semibold text-gray-800">{project.name}</h3>
-                <span className={`px-4 py-1 rounded-full text-sm font-medium ${badgeColors[project.role]}`}>
+        <div className="bg-gray-50 rounded-lg border-t-4 border-t-[#00CED1] shadow-sm p-5 hover:shadow-md transition-all">
+            {/* Header: Project Name and Badge */}
+            <div className="flex justify-between items-start mb-3">
+                <h2 className="text-2xl font-bold text-gray-900">{project.name}</h2>
+
+                {/* Role Badge */}
+                <span className={`px-5 py-2 rounded-full text-base font-bold border-2 border-black shadow-lg ${badgeColors[project.role]}`}>
                     {project.role}
                 </span>
             </div>
 
-            {/* Members */}
-            <div className="mb-4">
-                <p className="text-gray-500 text-sm mb-1">Members:</p>
-                <div className="flex flex-wrap gap-1 text-gray-700 font-medium">
-                    {project.members.map((member, index) => (
-                        <span key={index}>
-                            <a
-                                href={member.github}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="hover:text-blue-600 hover:underline transition-colors"
-                            >
-                                {member.name}
-                            </a>
-                            {index < project.members.length - 1 && <span>, </span>}
-                        </span>
-                    ))}
-                </div>
+            {/* Team Lead */}
+            <div className="mb-1.5">
+                <span className="text-gray-400 text-sm font-bold">Team lead: </span>
+                <a
+                    href={project.teamLead.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#00CED1] hover:underline text-sm font-bold"
+                >
+                    {project.teamLead.name}
+                </a>
             </div>
 
-            {/* Recent Commits */}
+            {/* Recent Commit */}
+            <div className="mb-1.5">
+                <span className="text-gray-400 text-sm font-bold">Recent commit: </span>
+                <span className="text-[#32CD32] text-sm font-bold">{project.recentCommit.hash}</span>
+                <span className="text-gray-400 text-sm font-bold"> by </span>
+                <a
+                    href={project.recentCommit.author.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#00CED1] hover:underline text-sm font-bold"
+                >
+                    {project.recentCommit.author.name}
+                </a>
+            </div>
+
+            {/* Members */}
             <div className="mb-4">
-                <p className="text-sm text-gray-600">{project.recentCommits}</p>
+                <span className="text-gray-400 text-sm font-bold">Members: </span>
+                {project.members.map((member, index) => (
+                    <span key={index}>
+                        <a
+                            href={member.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#00CED1] hover:underline text-sm font-bold"
+                        >
+                            {member.name}
+                        </a>
+                        {index < project.members.length - 1 && <span className="text-gray-400 text-sm font-bold"> </span>}
+                    </span>
+                ))}
             </div>
 
             {/* GitHub Link */}
-            <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
-            >
-                <Github size={18} />
-                <span className="text-sm font-medium">Visit on Github</span>
-            </a>
+            <div className="text-right pt-2 border-t border-gray-200">
+                <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-gray-900 text-sm font-bold inline-block"
+                >
+                    Visit on Github
+                </a>
+            </div>
         </div>
     );
 };

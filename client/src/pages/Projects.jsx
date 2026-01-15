@@ -7,7 +7,7 @@ const Projects = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-8">Project</h1>
 
             {projects.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6">
                     {projects.map((project) => (
                         <ProjectCard key={project.id} project={project} />
                     ))}

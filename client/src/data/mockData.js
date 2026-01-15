@@ -1,4 +1,49 @@
-export const projects = [];
+export const projects = [
+    {
+        id: 1,
+        name: "Project Name",
+        teamLead: {
+            name: "Team lead Name",
+            github: "https://github.com/teamlead"
+        },
+        recentCommit: {
+            hash: "commit1",
+            author: {
+                name: "memb1",
+                github: "https://github.com/memb1"
+            }
+        },
+        members: [
+            { name: "memb1", github: "https://github.com/memb1" },
+            { name: "memb2", github: "https://github.com/memb2" },
+            { name: "memb3", github: "https://github.com/memb3" }
+        ],
+        role: "contributor",
+        githubUrl: "https://github.com/project-repo"
+    },
+    {
+        id: 2,
+        name: "Project Name",
+        teamLead: {
+            name: "Team lead Name",
+            github: "https://github.com/teamlead"
+        },
+        recentCommit: {
+            hash: "commit1",
+            author: {
+                name: "memb1",
+                github: "https://github.com/memb1"
+            }
+        },
+        members: [
+            { name: "memb1", github: "https://github.com/memb1" },
+            { name: "memb2", github: "https://github.com/memb2" },
+            { name: "memb3", github: "https://github.com/memb3" }
+        ],
+        role: "maintainer",
+        githubUrl: "https://github.com/project-repo"
+    }
+];
 
 export const meetings = [
     {

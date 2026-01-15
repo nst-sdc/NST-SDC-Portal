@@ -308,12 +308,6 @@ const Calendar = () => {
             {/* Top Navigation Bar */}
             <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-20 shadow-sm transition-all">
                 <div className="flex items-center space-x-6">
-                    <div
-                        className="flex items-center text-gray-600 hover:bg-gray-100 p-2 rounded-full cursor-pointer transition-colors duration-200 mr-2"
-                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    >
-                        <Menu className="w-6 h-6" />
-                    </div>
 
 
                     <button
@@ -394,60 +388,7 @@ const Calendar = () => {
 
             <div className="flex flex-1 overflow-hidden">
                 {/* Sidebar */}
-                {isSidebarOpen && (
-                    <aside className="w-64 flex-none border-r border-gray-200 p-4 hidden lg:flex flex-col space-y-6 animate-in slide-in-from-left-5 duration-200">
-                        {/* Mini Calendar Visualization */}
-                        <div className="w-full">
-                            <div className="flex justify-between items-center mb-6 px-1">
-                                <span className="text-sm font-bold text-gray-800 tracking-wide">
-                                    {miniCurrentDate.toLocaleString('default', { month: 'long' })} {miniCurrentDate.getFullYear()}
-                                </span>
-                                <div className="flex space-x-1">
-                                    <button
-                                        onClick={() => setMiniCurrentDate(new Date(miniCurrentDate.getFullYear(), miniCurrentDate.getMonth() - 1, 1))}
-                                        className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                    >
-                                        <ChevronLeft className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-                                    </button>
-                                    <button
-                                        onClick={() => setMiniCurrentDate(new Date(miniCurrentDate.getFullYear(), miniCurrentDate.getMonth() + 1, 1))}
-                                        className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                    >
-                                        <ChevronRight className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-7 text-center text-[10px] font-medium text-gray-400 mb-2">
-                                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => <span key={d}>{d}</span>)}
-                            </div>
-                            <div className="grid grid-cols-7 text-center text-xs text-gray-700 gap-y-1 gap-x-1">
-                                {miniDays.map((day, index) => {
-                                    const isToday = day && isSameDay(day, new Date());
-                                    return (
-                                        <div key={index} className="flex justify-center">
-                                            {day ? (
-                                                <span
-                                                    onClick={() => setCurrentDate(day)}
-                                                    className={`
-                                                        w-7 h-7 flex items-center justify-center rounded-full cursor-pointer transition-all duration-200
-                                                        ${isToday
-                                                            ? 'bg-blue-600 text-white font-bold shadow-sm shadow-blue-200'
-                                                            : 'hover:bg-gray-100 hover:text-blue-600'
-                                                        }
-                                                    `}
-                                                >
-                                                    {day.getDate()}
-                                                </span>
-                                            ) : (
-                                                <span className="w-7 h-7"></span>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </aside>
-                )}
+
 
                 {/* Main Content Area */}
                 {view === 'month' && renderMonthView()}
