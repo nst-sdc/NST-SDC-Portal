@@ -11,6 +11,7 @@ import Attendance from './pages/Attendance';
 import Meetings from './pages/Meetings';
 import Calendar from './pages/Calendar';
 import Profile from './pages/Profile';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function App() {
   return (
@@ -30,6 +31,13 @@ function App() {
           <Route path="/meetings" element={<Meetings />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/profile" element={<Profile />} />
+        </Route>
+      </Route>
+
+      {/* Admin Route */}
+      <Route element={<ProtectedRoute adminOnly={true} />}>
+        <Route element={<Layout />}>
+          <Route path="/admin" element={<AdminDashboard />} />
         </Route>
       </Route>
     </Routes>

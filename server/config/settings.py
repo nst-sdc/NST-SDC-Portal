@@ -95,6 +95,9 @@ DATABASES = {
         ssl_require=True,
     )
 }
+# Disable server-side cursors for Neon/PgBouncer
+# Note: DISABLE_SERVER_SIDE_CURSORS is not valid in OPTIONS for psycopg2
+# We will address the cursor issue differently if it persists.
 
 
 # Password validation

@@ -121,15 +121,28 @@ class UserPasswordChangeView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+class IsClubAdmin(permissions.BasePermission):
     """
-    ViewSet for viewing users (read-only for non-admins).
-    Admins can see all users, regular users can see members only.
+    Custom permission to only allow club admins to edit.
+    """
+
+    def has_permission(self, request, view):
+        return request.user and (request.user.is_club_admin or request.user.is_staff)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for viewing and editing users.
+    Admins can see/edit all users, regular users can see members only.
     """
 
     queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return [permissions.IsAuthenticated(), IsClubAdmin()]
+        return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
         queryset = super().get_queryset()

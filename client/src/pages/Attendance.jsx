@@ -74,10 +74,7 @@ const Attendance = () => {
                 if (totalPastMeetups > 0) {
                     setPercentage(Math.round((attendedPastMeetupsCount / totalPastMeetups) * 100));
                 } else {
-                    setPercentage(100);
-                    if (attendedPastMeetupsCount === 0 && totalPastMeetups === 0) setPercentage(100); // No meetings held = 100% attendance (technically)
-                    // Or 0? Let's stick to 100% or user preference. Code had 100 previously.
-                    // Actually if total is 0, percentage is N/A. Let's show - or 100.
+                    setPercentage(0);
                 }
 
             } catch (err) {
@@ -94,6 +91,8 @@ const Attendance = () => {
     if (loading) return <div className="p-8 text-center text-gray-500">Loading attendance...</div>;
     if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
 
+    const totalEvents = attended.length + missed.length;
+
     return (
         <div className="p-8 max-w-6xl mx-auto">
             <h1 className="text-3xl font-bold text-gray-800 mb-8">My Attendance</h1>
@@ -105,10 +104,10 @@ const Attendance = () => {
                     <p className="text-sm text-gray-400">Based on past meetings (Meetups)</p>
                 </div>
                 <div className="text-right">
-                    <span className={`text-5xl font-bold ${percentage >= 75 ? 'text-green-500' :
+                    <span className={`text-5xl font-bold ${totalEvents === 0 ? 'text-gray-400' : percentage >= 75 ? 'text-green-500' :
                         percentage >= 50 ? 'text-yellow-500' : 'text-red-500'
                         }`}>
-                        {percentage}%
+                        {totalEvents > 0 ? `${percentage}%` : 'N/A'}
                     </span>
                     <div className="text-sm text-gray-500 mt-1">
                         {attended.length} Attended / {attended.length + missed.length} Total

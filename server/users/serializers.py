@@ -103,6 +103,7 @@ class LeaderboardSerializer(serializers.ModelSerializer):
             "batch_year",
             "skill_level",
             "rank",
+            "github_username",
         ]
 
 

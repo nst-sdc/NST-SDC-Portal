@@ -11,6 +11,7 @@ const Profile = () => {
     const [isChangingPassword, setIsChangingPassword] = useState(false);
     const [passwordData, setPasswordData] = useState({ old_password: '', new_password: '', confirm_new_password: '' });
     const [formData, setFormData] = useState({});
+    const [githubData, setGithubData] = useState(null);
 
     // Fetch Data
     useEffect(() => {
@@ -24,6 +25,10 @@ const Profile = () => {
                     const projectsData = await getUserProjects(userData.id);
                     setProjects(projectsData);
                 }
+
+                if (userData.github_username) {
+                    fetchGithubDetails(userData.github_username);
+                }
             } catch (error) {
                 console.error("Failed to load profile", error);
             } finally {
@@ -32,6 +37,19 @@ const Profile = () => {
         };
         loadData();
     }, []);
+
+    const fetchGithubDetails = async (username) => {
+        if (!username) return;
+        try {
+            const res = await fetch(`https://api.github.com/users/${username}`);
+            if (res.ok) {
+                const data = await res.json();
+                setGithubData(data);
+            }
+        } catch (err) {
+            console.error("Failed to fetch github data", err);
+        }
+    };
 
     // Handle Form Change
     const handleChange = (e) => {
@@ -44,21 +62,48 @@ const Profile = () => {
         setFormData({ ...formData, tech_skills: skillsString.split(',').map(s => s.trim()) });
     };
 
+    // Helper to ensure URL has protocol
+    const fixUrl = (url) => {
+        if (!url) return null;
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            return `https://${url}`;
+        }
+        return url;
+    };
+
     // Save Profile
     const handleSave = async () => {
         try {
             const updatedUser = await updateProfile({
                 bio: formData.bio,
                 github_username: formData.github_username,
-                linkedin_url: formData.linkedin_url,
-                portfolio_url: formData.portfolio_url,
-                tech_skills: formData.tech_skills,
+                linkedin_url: fixUrl(formData.linkedin_url),
+                portfolio_url: fixUrl(formData.portfolio_url),
+                tech_skills: Array.isArray(formData.tech_skills) ? formData.tech_skills.filter(s => s.trim()) : [],
             });
             setUser(updatedUser);
+            if (updatedUser.github_username && updatedUser.github_username !== user.github_username) {
+                fetchGithubDetails(updatedUser.github_username);
+            }
             setIsEditing(false);
         } catch (error) {
             console.error("Failed to update profile", error);
-            alert("Failed to update profile.");
+            // safe error parsing
+            let errorMessage = "Failed to update profile.";
+            if (error.response && error.response.data) {
+                // If data is object, try to join values
+                const data = error.response.data;
+                if (typeof data === 'object') {
+                    const messages = Object.entries(data).map(([key, value]) => {
+                        const valStr = Array.isArray(value) ? value.join(' ') : String(value);
+                        return `${key}: ${valStr}`;
+                    });
+                    errorMessage = messages.join('\n');
+                } else {
+                    errorMessage = String(data);
+                }
+            }
+            alert(errorMessage);
         }
     };
 
@@ -90,7 +135,7 @@ const Profile = () => {
                 {/* Avatar */}
                 <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-4 border-white shadow-md flex-shrink-0">
                     <img
-                        src={user.avatar || `https://ui-avatars.com/api/?name=${user.full_name}&background=random`}
+                        src={user.avatar || (user.github_username ? `https://github.com/${user.github_username}.png` : `https://ui-avatars.com/api/?name=${user.full_name}&background=random`)}
                         alt="Profile"
                         className="w-full h-full object-cover"
                     />
@@ -275,14 +320,62 @@ const Profile = () => {
                     {/* GitHub Stats */}
                     {user.github_username && !isEditing && (
                         <div className="bg-white rounded-lg shadow-sm p-6 overflow-hidden">
-                            <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Github size={20} /> GitHub Stats</h3>
-                            <div className="flex justify-center">
-                                <img
-                                    src={`https://github-readme-stats.vercel.app/api?username=${user.github_username}&show_icons=true&theme=transparent&hide_border=true&title_color=333&text_color=555&icon_color=ff7e21`}
-                                    alt="GitHub Stats"
-                                    className="w-full"
-                                />
-                            </div>
+                            <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Github size={20} /> GitHub Profile</h3>
+
+                            {githubData ? (
+                                <div className="space-y-4">
+                                    {/* GitHub Bio */}
+                                    {githubData.bio && (
+                                        <p className="text-gray-600 text-sm italic">"{githubData.bio}"</p>
+                                    )}
+
+                                    {/* Stats Grid */}
+                                    <div className="grid grid-cols-3 gap-2 text-center bg-gray-50 p-3 rounded-lg">
+                                        <div>
+                                            <div className="text-lg font-bold text-gray-800">{githubData.public_repos}</div>
+                                            <div className="text-xs text-gray-500">Repos</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-lg font-bold text-gray-800">{githubData.followers}</div>
+                                            <div className="text-xs text-gray-500">Followers</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-lg font-bold text-gray-800">{githubData.following}</div>
+                                            <div className="text-xs text-gray-500">Following</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Additional Details */}
+                                    <div className="space-y-2 text-sm text-gray-600">
+                                        {githubData.company && (
+                                            <div className="flex items-center gap-2">
+                                                <Briefcase size={14} /> {githubData.company}
+                                            </div>
+                                        )}
+                                        {githubData.location && (
+                                            <div className="flex items-center gap-2">
+                                                <MapPin size={14} /> {githubData.location}
+                                            </div>
+                                        )}
+                                        <div className="flex items-center gap-2">
+                                            <Calendar size={14} /> Joined {new Date(githubData.created_at).toLocaleDateString()}
+                                        </div>
+                                    </div>
+
+                                    <a
+                                        href={githubData.html_url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="block text-center mt-2 text-blue-600 text-sm hover:underline"
+                                    >
+                                        View on GitHub
+                                    </a>
+                                </div>
+                            ) : (
+                                <div className="text-center py-4 text-gray-500">
+                                    Loading GitHub data...
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

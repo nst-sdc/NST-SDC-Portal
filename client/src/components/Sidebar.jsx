@@ -1,9 +1,22 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Menu, Home, FolderKanban, Users, Trophy, UserCheck, Calendar, User } from 'lucide-react';
+import { useNavigate, NavLink } from 'react-router-dom';
+import { Menu, Home, FolderKanban, Users, Trophy, UserCheck, Calendar, User, LogOut } from 'lucide-react';
+import { logoutUser } from '../api/auth';
 
 const Sidebar = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+        } catch (error) {
+            console.error("Logout failed", error);
+        } finally {
+            // Ideally clear context here
+            navigate('/login');
+        }
+    };
 
     const menuItems = [
         { name: 'Home', path: '/', icon: Home },
@@ -80,8 +93,15 @@ const Sidebar = () => {
 
 
             {/* Footer Section */}
-            <div className="p-4">
-                {/* Login button removed */}
+            <div className="p-4 border-t border-gray-700">
+                <button
+                    onClick={handleLogout}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors w-full ${isCollapsed ? 'justify-center' : ''}`}
+                    title={isCollapsed ? "Logout" : ""}
+                >
+                    <LogOut size={20} className="flex-shrink-0" />
+                    {!isCollapsed && <span className="font-medium">Logout</span>}
+                </button>
             </div>
         </div>
     );

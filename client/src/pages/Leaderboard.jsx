@@ -83,12 +83,12 @@ const Leaderboard = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-3 overflow-hidden">
-                                                {user.avatar ? (
-                                                    <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    user.full_name ? user.full_name.charAt(0).toUpperCase() : user.username.charAt(0).toUpperCase()
-                                                )}
+                                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-3 overflow-hidden border border-blue-50">
+                                                <img
+                                                    src={user.avatar || (user.github_username ? `https://github.com/${user.github_username}.png` : `https://ui-avatars.com/api/?name=${user.full_name || user.username}&background=random`)}
+                                                    alt={user.username}
+                                                    className="w-full h-full object-cover"
+                                                />
                                             </div>
                                             <div>
                                                 <div className="font-bold text-gray-900">{user.full_name || user.username}</div>
