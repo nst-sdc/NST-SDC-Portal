@@ -3,6 +3,8 @@ import Sidebar from './components/Sidebar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Projects from './pages/Projects';
+import Members from './pages/Members';
+import Events from './pages/Events';
 import Leaderboard from './pages/Leaderboard';
 import Attendance from './pages/Attendance';
 import Meetings from './pages/Meetings';
@@ -17,6 +19,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/members" element={<Members />} />
+          <Route path="/events" element={<Events />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/attendance" element={<Attendance />} />
 
