@@ -1,0 +1,12 @@
+services:
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./server/.env
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=*
