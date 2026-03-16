@@ -17,9 +17,18 @@ from .serializers import (
 User = get_user_model()
 
 
-class UserLoginView(APIView):
-    """Login endpoint for session authentication"""
+import logging
+import traceback
+from django.db import connections
+from django.db.utils import OperationalError
 
+logger = logging.getLogger(__name__)
+
+class UserLoginView(APIView):
+    """
+    Login endpoint for session authentication.
+    Returns 400 for invalid credentials, 404 for missing user, 500 for server errors.
+    """
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -32,18 +41,57 @@ class UserLoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user = authenticate(request, username=username, password=password)
+        try:
+            # 1. Verify database connection
+            db_conn = connections['default']
+            try:
+                db_conn.cursor()
+            except OperationalError:
+                logger.error("Database connection failure before login")
+                return Response(
+                    {"detail": "Database connection unavailable"},
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE
+                )
 
-        if user is not None:
-            login(request, user)
-            serializer = UserSerializer(user)
+            # 2. Safe User lookup
+            user_exists = User.objects.filter(username=username).exists()
+            if not user_exists:
+                logger.warning(f"Login attempt for non-existent user: {username}")
+                return Response(
+                    {"detail": "User not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # 3. Authenticate (includes password check)
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                serializer = UserSerializer(user)
+                logger.info(f"Successful login for user: {username}")
+                return Response(
+                    {"detail": "Login successful", "user": serializer.data},
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                logger.warning(f"Invalid credentials for user: {username}")
+                return Response(
+                    {"detail": "Invalid credentials"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        except Exception as e:
+            # 4. Print exact stack trace and return JSON
+            error_trace = traceback.format_exc()
+            print(f"CRITICAL: Login failure for {username}:\n{error_trace}")
+            logger.error(f"Login exception for {username}: {str(e)}", exc_info=True)
             return Response(
-                {"detail": "Login successful", "user": serializer.data},
-                status=status.HTTP_200_OK,
-            )
-        else:
-            return Response(
-                {"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
+                {
+                    "detail": "An unexpected server error occurred",
+                    "error": str(e),
+                    "trace": error_trace if settings.DEBUG else None
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 
