@@ -49,10 +49,10 @@ const Home = () => {
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold font-mono tracking-wide text-[#E0E0E0]">
                     <span className="text-[#00E0FF] text-4xl mr-2">{`>`}</span>
-                    HELLO, <span className="text-white">{data.user.name || data.user.username}</span>
+                    HELLO, <span className="text-white">{data?.user?.name || data?.user?.username || 'GUEST'}</span>
                 </h1>
                 <div className="bg-[#121212] border border-[#00E0FF]/30 text-[#00E0FF] px-6 py-2 rounded-lg font-bold font-mono shadow-[0_0_10px_rgba(0,224,255,0.1)]">
-                    POINTS: <span className="text-white ml-2">{data.user.points}</span>
+                    POINTS: <span className="text-white ml-2">{data?.user?.points ?? 0}</span>
                 </div>
             </div>
 
