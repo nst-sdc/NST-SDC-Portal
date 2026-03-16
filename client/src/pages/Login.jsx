@@ -21,7 +21,12 @@ const Login = () => {
             window.location.reload();
         } catch (err) {
             console.error("Login failed:", err);
-            setError("Invalid username or password");
+            // Show exact error from API if available
+            const apiMessage =
+                err?.response?.data?.detail ||
+                err?.response?.data?.error ||
+                "Invalid username or password";
+            setError(apiMessage);
         } finally {
             setLoading(false);
         }

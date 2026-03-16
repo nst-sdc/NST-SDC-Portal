@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
 from django.db.models import F, Window, Q
 from django.db.models.functions import RowNumber
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.utils.decorators import method_decorator
 from .serializers import (
     UserSerializer,
     UserProfileUpdateSerializer,
@@ -24,10 +26,14 @@ from django.db.utils import OperationalError
 
 logger = logging.getLogger(__name__)
 
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class UserLoginView(APIView):
     """
     Login endpoint for session authentication.
     Returns 400 for invalid credentials, 404 for missing user, 500 for server errors.
+    CSRF is explicitly exempted here because the browser may not have a CSRF cookie
+    on first visit. ensure_csrf_cookie sets the cookie so subsequent requests work.
     """
     permission_classes = [permissions.AllowAny]
 
